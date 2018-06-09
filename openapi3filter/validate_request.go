@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/jban332/kin-openapi/openapi3"
+	"github.com/marusama/kin-openapi/openapi3"
 	"io/ioutil"
 	"net/http"
 	"sort"

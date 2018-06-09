@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/jban332/kin-openapi.svg?branch=master)](https://travis-ci.org/jban332/kin-openapi)
-[![Go Report Card](https://goreportcard.com/badge/github.com/jban332/kin-openapi)](https://goreportcard.com/report/github.com/jban332/kin-openapi)
-[![GoDoc](https://godoc.org/github.com/jban332/kin-openapi?status.svg)](https://godoc.org/github.com/jban332/kin-openapi)
+Forked from: github.com/jban332/kin-openapi
 
 # Overview
 This library provides packages for dealing with OpenAPI specifications.
@@ -78,8 +76,8 @@ func GetOperation(httpRequest *http.Request) (*openapi3.Operation, error) {
 ## Validating HTTP requests/responses
 ```go
 import (
-  "github.com/jban332/kin-openapi/openapi3"
-  "github.com/jban332/kin-openapi/openapi3filter"
+  "github.com/marusama/kin-openapi/openapi3"
+  "github.com/marusama/kin-openapi/openapi3filter"
   "net/http"
 )
 

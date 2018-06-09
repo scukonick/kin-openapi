@@ -1,8 +1,8 @@
 package openapi3filter_test
 
 import (
-	"github.com/jban332/kin-openapi/openapi3"
-	"github.com/jban332/kin-openapi/openapi3filter"
+	"github.com/marusama/kin-openapi/openapi3"
+	"github.com/marusama/kin-openapi/openapi3filter"
 	"net/http"
 	"sort"
 	"testing"

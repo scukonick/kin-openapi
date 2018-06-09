@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/jban332/kin-openapi/jsoninfo"
+	"github.com/marusama/kin-openapi/jsoninfo"
 )
 
 type SecurityScheme struct {
