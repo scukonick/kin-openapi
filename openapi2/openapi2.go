@@ -9,10 +9,12 @@ package openapi2
 
 import (
 	"fmt"
+
 	"github.com/marusama/kin-openapi/openapi3"
 )
 
 type Swagger struct {
+	Swagger             string                         `json:"swagger"`	// Required. The value MUST be "2.0".
 	Info                openapi3.Info                  `json:"info"`
 	ExternalDocs        *openapi3.ExternalDocs         `json:"externalDocs,omitempty"`
 	Schemes             []string                       `json:"schemas,omitempty"`
@@ -25,6 +27,12 @@ type Swagger struct {
 	SecurityDefinitions map[string]*SecurityScheme     `json:"securityDefinitions,omitempty"`
 	Security            SecurityRequirements           `json:"security,omitempty"`
 	Tags                openapi3.Tags                  `json:"tags,omitempty"`
+}
+
+func NewSwagger() *Swagger {
+	return &Swagger{
+		Swagger: "2.0",
+	}
 }
 
 func (swagger *Swagger) AddOperation(path string, method string, operation *Operation) {
