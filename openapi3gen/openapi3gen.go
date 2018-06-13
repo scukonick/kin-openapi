@@ -43,24 +43,28 @@ func NewGenerator() *Generator {
 }
 
 func (g *Generator) GenerateSchemaRef(t reflect.Type) (*openapi3.SchemaRef, error) {
-	return g.generateSchemaRefFor(nil, t)
+	return g.generateSchemaRefFor(nil, nil, nil, t)
 }
 
-func (g *Generator) generateSchemaRefFor(parents []*jsoninfo.TypeInfo, t reflect.Type) (*openapi3.SchemaRef, error) {
+func (g *Generator) generateSchemaRefFor(
+	parents []*jsoninfo.TypeInfo, parent *jsoninfo.TypeInfo, f *jsoninfo.FieldInfo, t reflect.Type) (*openapi3.SchemaRef, error) {
 	ref := g.Types[t]
 	if ref != nil {
 		g.SchemaRefs[ref]++
 		return ref, nil
 	}
-	ref, err := g.generateWithoutSaving(parents, t)
+	ref, err := g.generateWithoutSaving(parents, parent, f, t)
 	if ref != nil {
-		g.Types[t] = ref
-		g.SchemaRefs[ref]++
+		if f == nil || len(f.EnumValues) == 0 {
+			g.Types[t] = ref
+			g.SchemaRefs[ref]++
+		}
 	}
 	return ref, err
 }
 
-func (g *Generator) generateWithoutSaving(parents []*jsoninfo.TypeInfo, t reflect.Type) (*openapi3.SchemaRef, error) {
+func (g *Generator) generateWithoutSaving(
+	parents []*jsoninfo.TypeInfo, parentType *jsoninfo.TypeInfo, f *jsoninfo.FieldInfo, t reflect.Type) (*openapi3.SchemaRef, error) {
 	// Get TypeInfo
 	typeInfo := jsoninfo.GetTypeInfo(t)
 	for _, parent := range parents {
@@ -86,7 +90,7 @@ func (g *Generator) generateWithoutSaving(parents []*jsoninfo.TypeInfo, t reflec
 		_, a := t.FieldByName("Ref")
 		v, b := t.FieldByName("Value")
 		if a && b {
-			vs, err := g.generateSchemaRefFor(parents, v.Type)
+			vs, err := g.generateSchemaRefFor(parents, typeInfo, nil, v.Type)
 			if err != nil {
 				return nil, err
 			}
@@ -131,6 +135,12 @@ func (g *Generator) generateWithoutSaving(parents []*jsoninfo.TypeInfo, t reflec
 
 	case reflect.String:
 		schema.Type = "string"
+		if f != nil && len(f.EnumValues) > 0 {
+			schema.Enum = make([]interface{}, 0, len(f.EnumValues))
+			for _, x := range f.EnumValues {
+				schema.Enum = append(schema.Enum, x)
+			}
+		}
 
 	case reflect.Slice:
 		if t.Elem().Kind() == reflect.Uint8 {
@@ -143,7 +153,7 @@ func (g *Generator) generateWithoutSaving(parents []*jsoninfo.TypeInfo, t reflec
 			schema.Format = "byte"
 		} else {
 			schema.Type = "array"
-			items, err := g.generateSchemaRefFor(parents, t.Elem())
+			items, err := g.generateSchemaRefFor(parents, typeInfo, nil, t.Elem())
 			if err != nil {
 				return nil, err
 			}
@@ -155,7 +165,7 @@ func (g *Generator) generateWithoutSaving(parents []*jsoninfo.TypeInfo, t reflec
 
 	case reflect.Map:
 		schema.Type = "object"
-		additionalProperties, err := g.generateSchemaRefFor(parents, t.Elem())
+		additionalProperties, err := g.generateSchemaRefFor(parents, typeInfo, nil, t.Elem())
 		if err != nil {
 			return nil, err
 		}
@@ -174,7 +184,7 @@ func (g *Generator) generateWithoutSaving(parents []*jsoninfo.TypeInfo, t reflec
 				if !fieldInfo.HasJSONTag {
 					continue
 				}
-				ref, err := g.generateSchemaRefFor(parents, fieldInfo.Type)
+				ref, err := g.generateSchemaRefFor(parents, typeInfo, &fieldInfo, fieldInfo.Type)
 				if err != nil {
 					return nil, err
 				}

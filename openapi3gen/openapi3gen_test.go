@@ -2,10 +2,11 @@ package openapi3gen_test
 
 import (
 	"encoding/json"
-	"github.com/marusama/kin-openapi/openapi3gen"
-	"github.com/jban332/kin-test/jsontest"
 	"testing"
 	"time"
+
+	"github.com/jban332/kin-test/jsontest"
+	"github.com/marusama/kin-openapi/openapi3gen"
 )
 
 type CyclicType0 struct {
@@ -38,7 +39,9 @@ type Example struct {
 	EmptyStruct struct {
 		X string
 	} `json:"structWithoutFields"`
-	Ptr *ExampleChild `json:"ptr"`
+	Ptr         *ExampleChild `json:"ptr"`
+	SomeEnum    string        `json:"some_enum" enum:"A,B,C"`
+	SomePtrEnum *string       `json:"some_ptr_enum" enum:"X,Y,Z"`
 }
 
 type ExampleChild string
@@ -55,15 +58,15 @@ func TestSimple(t *testing.T) {
 				"type": "boolean",
 			},
 			"int": Object{
-				"type":   "number",
-				"format": "int64",
+				"type":   "integer",
 			},
 			"int64": Object{
-				"type":   "number",
+				"type":   "integer",
 				"format": "int64",
 			},
 			"float64": Object{
 				"type": "number",
+				"format": "double",
 			},
 			"time": Object{
 				"type":   "string",
@@ -100,6 +103,14 @@ func TestSimple(t *testing.T) {
 			"structWithoutFields": Object{},
 			"ptr": Object{
 				"type": "string",
+			},
+			"some_enum": Object{
+				"type": "string",
+				"enum": Array{"A", "B", "C"},
+			},
+			"some_ptr_enum": Object{
+				"type": "string",
+				"enum": Array{"X", "Y", "Z"},
 			},
 		},
 	})

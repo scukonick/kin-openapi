@@ -18,6 +18,7 @@ type FieldInfo struct {
 	JSONName           string
 	JSONOmitEmpty      bool
 	JSONString         bool
+	EnumValues         []string
 }
 
 func AppendFields(fields []FieldInfo, parentIndex []int, t reflect.Type) []FieldInfo {
@@ -90,6 +91,12 @@ iteration:
 					}
 				}
 			}
+		}
+
+		// Read "enum" tag
+		enumTag := f.Tag.Get("enum")
+		if len(enumTag) > 0 {
+			field.EnumValues = strings.Split(enumTag, ",")
 		}
 
 		if _, ok := field.Type.MethodByName("MarshalJSON"); ok {
