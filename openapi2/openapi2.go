@@ -14,10 +14,12 @@ import (
 )
 
 type Swagger struct {
-	Swagger             string                         `json:"swagger"`	// Required. The value MUST be "2.0".
+	Swagger             string                         `json:"swagger"` // Required. The value MUST be "2.0".
 	Info                openapi3.Info                  `json:"info"`
 	ExternalDocs        *openapi3.ExternalDocs         `json:"externalDocs,omitempty"`
-	Schemes             []string                       `json:"schemas,omitempty"`
+	Schemes             []string                       `json:"schemes,omitempty"`
+	Consumes            []string                       `json:"consumes,omitempty"`
+	Produces            []string                       `json:"produces,omitempty"`
 	Host                string                         `json:"host,omitempty"`
 	BasePath            string                         `json:"basePath,omitempty"`
 	Paths               map[string]*PathItem           `json:"paths,omitempty"`
