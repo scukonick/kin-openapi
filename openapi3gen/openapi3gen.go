@@ -3,15 +3,21 @@ package openapi3gen
 
 import (
 	"encoding/json"
-	"github.com/marusama/kin-openapi/jsoninfo"
-	"github.com/marusama/kin-openapi/openapi3"
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/marusama/kin-openapi/jsoninfo"
+	"github.com/marusama/kin-openapi/openapi3"
 )
 
 // CycleError indicates that a type graph has one or more possible cycles.
 type CycleError struct{}
+
+// Enumer enum values interface
+type enumer interface {
+	Enum() []string
+}
 
 func (err *CycleError) Error() string {
 	return "Detected JSON cycle"
@@ -135,7 +141,13 @@ func (g *Generator) generateWithoutSaving(
 
 	case reflect.String:
 		schema.Type = "string"
-		if f != nil && len(f.EnumValues) > 0 {
+		if t.Implements(reflect.TypeOf((*enumer)(nil)).Elem()) {
+			enumValues := reflect.New(t).Interface().(enumer).Enum()
+			schema.Enum = make([]interface{}, 0, len(enumValues))
+			for _, x := range enumValues {
+				schema.Enum = append(schema.Enum, x)
+			}
+		} else if f != nil && len(f.EnumValues) > 0 {
 			schema.Enum = make([]interface{}, 0, len(f.EnumValues))
 			for _, x := range f.EnumValues {
 				schema.Enum = append(schema.Enum, x)

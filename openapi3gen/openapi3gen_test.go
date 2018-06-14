@@ -22,6 +22,18 @@ func TestCyclic(t *testing.T) {
 	jsontest.ExpectWithErr(t, schema, err).ErrOfType(&openapi3gen.CycleError{})
 }
 
+type TypeEnumString string
+
+func (TypeEnumString) Enum() []string {
+	return []string{"D", "E", "F"}
+}
+
+type TypeEnumString2 string
+
+func (TypeEnumString2) Enum() []string {
+	return []string{"G", "H", "I"}
+}
+
 type Example struct {
 	Bool    bool                     `json:"bool"`
 	Int     int                      `json:"int"`
@@ -39,9 +51,11 @@ type Example struct {
 	EmptyStruct struct {
 		X string
 	} `json:"structWithoutFields"`
-	Ptr         *ExampleChild `json:"ptr"`
-	SomeEnum    string        `json:"some_enum" enum:"A,B,C"`
-	SomePtrEnum *string       `json:"some_ptr_enum" enum:"X,Y,Z"`
+	Ptr           *ExampleChild   `json:"ptr"`
+	SomeEnum      string          `json:"some_enum" enum:"A,B,C"`
+	SomePtrEnum   *string         `json:"some_ptr_enum" enum:"X,Y,Z"`
+	SomeTypeEnum  TypeEnumString  `json:"some_type_enum"`
+	SomeTypeEnum2 TypeEnumString2 `json:"some_type_enum_2"`
 }
 
 type ExampleChild string
@@ -58,14 +72,14 @@ func TestSimple(t *testing.T) {
 				"type": "boolean",
 			},
 			"int": Object{
-				"type":   "integer",
+				"type": "integer",
 			},
 			"int64": Object{
 				"type":   "integer",
 				"format": "int64",
 			},
 			"float64": Object{
-				"type": "number",
+				"type":   "number",
 				"format": "double",
 			},
 			"time": Object{
@@ -111,6 +125,14 @@ func TestSimple(t *testing.T) {
 			"some_ptr_enum": Object{
 				"type": "string",
 				"enum": Array{"X", "Y", "Z"},
+			},
+			"some_type_enum": Object{
+				"type": "string",
+				"enum": Array{"D", "E", "F"},
+			},
+			"some_type_enum_2": Object{
+				"type": "string",
+				"enum": Array{"G", "H", "I"},
 			},
 		},
 	})
