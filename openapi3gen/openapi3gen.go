@@ -18,8 +18,9 @@ type enumer interface {
 	Enum() []string
 }
 
-type namer interface {
+type jsonEnumer interface {
 	Names() []string
+	MarshalJSON() ([]byte, error)
 }
 
 func (err *CycleError) Error() string {
@@ -129,19 +130,16 @@ func (g *Generator) generateWithoutSaving(
 		schema.Type = "integer"
 	case reflect.Int8, reflect.Int16, reflect.Int32,
 		reflect.Uint8, reflect.Uint16, reflect.Uint32:
-		schema.Type = "integer"
-		schema.Format = "int32"
-		if t.Implements(reflect.TypeOf((*namer)(nil)).Elem()) {
-			enumValues := reflect.New(t).Interface().(namer).Names()
+		if t.Implements(reflect.TypeOf((*jsonEnumer)(nil)).Elem()) {
+			enumValues := reflect.New(t).Interface().(jsonEnumer).Names()
 			schema.Enum = make([]interface{}, 0, len(enumValues))
 			for _, x := range enumValues {
 				schema.Enum = append(schema.Enum, x)
 			}
-		} else if f != nil && len(f.EnumValues) > 0 {
-			schema.Enum = make([]interface{}, 0, len(f.EnumValues))
-			for _, x := range f.EnumValues {
-				schema.Enum = append(schema.Enum, x)
-			}
+			schema.Type = "string"
+		} else {
+			schema.Type = "integer"
+			schema.Format = "int32"
 		}
 	case reflect.Int64, reflect.Uint64:
 		schema.Type = "integer"
