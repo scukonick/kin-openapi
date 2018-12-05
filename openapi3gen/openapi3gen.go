@@ -14,9 +14,12 @@ import (
 // CycleError indicates that a type graph has one or more possible cycles.
 type CycleError struct{}
 
-// Enumer enum values interface
 type enumer interface {
 	Enum() []string
+}
+
+type namer interface {
+	Names() []string
 }
 
 func (err *CycleError) Error() string {
@@ -128,6 +131,18 @@ func (g *Generator) generateWithoutSaving(
 		reflect.Uint8, reflect.Uint16, reflect.Uint32:
 		schema.Type = "integer"
 		schema.Format = "int32"
+		if t.Implements(reflect.TypeOf((*namer)(nil)).Elem()) {
+			enumValues := reflect.New(t).Interface().(namer).Names()
+			schema.Enum = make([]interface{}, 0, len(enumValues))
+			for _, x := range enumValues {
+				schema.Enum = append(schema.Enum, x)
+			}
+		} else if f != nil && len(f.EnumValues) > 0 {
+			schema.Enum = make([]interface{}, 0, len(f.EnumValues))
+			for _, x := range f.EnumValues {
+				schema.Enum = append(schema.Enum, x)
+			}
+		}
 	case reflect.Int64, reflect.Uint64:
 		schema.Type = "integer"
 		schema.Format = "int64"
