@@ -1,12 +1,12 @@
 package jsoninfo_test
 
 import (
-	"github.com/marusama/kin-openapi/openapi3"
+	"github.com/scukonick/kin-openapi/openapi3"
 )
 
 import (
 	"encoding/json"
-	"github.com/marusama/kin-openapi/jsoninfo"
+	"github.com/scukonick/kin-openapi/jsoninfo"
 	"testing"
 	"time"
 )

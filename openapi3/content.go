@@ -2,7 +2,7 @@ package openapi3
 
 import (
 	"context"
-	"github.com/marusama/kin-openapi/jsoninfo"
+	"github.com/scukonick/kin-openapi/jsoninfo"
 	"strings"
 )
 

@@ -3,8 +3,8 @@ package openapi2conv
 
 import (
 	"fmt"
-	"github.com/marusama/kin-openapi/openapi2"
-	"github.com/marusama/kin-openapi/openapi3"
+	"github.com/scukonick/kin-openapi/openapi2"
+	"github.com/scukonick/kin-openapi/openapi3"
 	"net/url"
 )
 

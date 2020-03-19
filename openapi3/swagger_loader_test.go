@@ -2,7 +2,7 @@ package openapi3_test
 
 import (
 	"fmt"
-	"github.com/marusama/kin-openapi/openapi3"
+	"github.com/scukonick/kin-openapi/openapi3"
 )
 
 func ExampleSwaggerLoader() {
